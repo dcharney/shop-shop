@@ -17,7 +17,7 @@ function Detail() {
   const { loading, data } = useQuery(QUERY_PRODUCTS);
   useEffect(() => {
     if (products.length) {
-      setCurrentProduct(products.find(product._id === id));
+      setCurrentProduct(products.find(product => product._id === id));
     } else if (data) {
       dispatch({
         type: UPDATE_PRODUCTS,
@@ -25,8 +25,6 @@ function Detail() {
       });
     }
   }, [data, dispatch]);
-
-  const products = data?.products || [];
 
   useEffect(() => {
     if (products.length) {
