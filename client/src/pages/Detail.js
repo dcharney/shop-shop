@@ -11,31 +11,36 @@ import {
   UPDATE_PRODUCTS,
 } from "../utils/actions";
 import { QUERY_PRODUCTS } from "../utils/queries";
+import { idbPromise } from "../utils/helpers";
 import spinner from '../assets/spinner.gif'
-import { idbPromise } from '../utils/helpers';
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
   const { id } = useParams();
 
-  const [currentProduct, setCurrentProduct] = useState({})
+  const [currentProduct, setCurrentProduct] = useState({});
 
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
   const { products, cart } = state;
 
   useEffect(() => {
+    // already in global store
     if (products.length) {
       setCurrentProduct(products.find(product => product._id === id));
-    } else if (data) {
+    } 
+    // retrieved from server
+    else if (data) {
       dispatch({
         type: UPDATE_PRODUCTS,
         products: data.products
       });
+
       data.products.forEach((product) => {
         idbPromise('products', 'put', product);
       });
     }
+    // get cache from idb
     else if (!loading) {
       idbPromise('products', 'get').then((indexedProducts) => {
         dispatch({
@@ -73,6 +78,7 @@ function Detail() {
       type: REMOVE_FROM_CART,
       _id: currentProduct._id
     });
+
     idbPromise('cart', 'delete', { ...currentProduct });
   };
 
