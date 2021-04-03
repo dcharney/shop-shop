@@ -1,16 +1,14 @@
 export function pluralize(name, count) {
   if (count === 1) {
-    return name
+    return name;
   }
-  return name + 's'
+  return name + 's';
 }
 
 export function idbPromise(storeName, method, object) {
   return new Promise((resolve, reject) => {
     const request = window.indexedDB.open('shop-shop', 1);
-
     let db, tx, store;
-
     request.onupgradeneeded = function(e) {
       const db = request.result;
       db.createObjectStore('products', { keyPath: '_id' });
@@ -21,6 +19,7 @@ export function idbPromise(storeName, method, object) {
     request.onerror = function(e) {
       console.log('There was an error');
     };
+
     request.onsuccess = function(e) {
       db = request.result;
       tx = db.transaction(storeName, 'readwrite');
@@ -48,7 +47,7 @@ export function idbPromise(storeName, method, object) {
           console.log('No valid method');
           break;
       }
-      
+
       tx.oncomplete = function() {
         db.close();
       };
